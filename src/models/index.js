@@ -1,7 +1,12 @@
 const User = require('./User');
-const Article = require('./Article')
+const Invitation = require('./Invitation');
+const Company = require('./Company');
+const Profile = require('./Profile');
+
 
 module.exports = {
     User,
-    Article,
+    Invitation,
+    Company,
+    Profile
 }

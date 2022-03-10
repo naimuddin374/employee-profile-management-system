@@ -12,7 +12,7 @@ module.exports = (app) => {
     app.use(passport.initialize())
 
     passport.use(new JwtStrategy(opts, (payload, done) => {
-        User.findOne({ _id: payload._id })
+        User.findOne({ _id: payload._id, status: 1 })
             .then(user => {
                 if (!user) {
                     return done(null, false)

@@ -1,7 +1,7 @@
 const loginValidator = data => {
     let error = {}
 
-    if (!data.email && !data.username && !data.phoneNumber) {
+    if (!data.email) {
         error.email = 'Email field is required!'
     }
     if (!data.password) {

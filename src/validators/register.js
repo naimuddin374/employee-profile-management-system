@@ -1,6 +1,9 @@
 const registerValidator = data => {
     let error = {}
 
+    if (!data.token) {
+        error.token = 'Token field is required!'
+    }
     if (!data.name) {
         error.name = 'Name field is required!'
     }
