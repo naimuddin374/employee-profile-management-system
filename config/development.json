@@ -1,0 +1,5 @@
+{
+    "SECRET_KEY": "APP_SECRET_KEY",
+    "DB_CONNECTION": "mongodb://localhost:27017/epms",
+    "env": "development"
+}
