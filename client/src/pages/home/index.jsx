@@ -1,6 +1,4 @@
 import React from 'react';
-import ArticleCard from '../../components/article-card';
-import ArticlePagination from '../../components/article-pagination';
 import axios from '../../util/axios'
 import { useRouter } from 'next/router'
 
@@ -25,7 +23,7 @@ const Home = () => {
                 return;
             }
             setPage(_page)
-            const { data } = await axios.get(`/articles?page=${_page}&limit=${_limit}`);
+            const { data } = await axios.get(`/users?page=${_page}&limit=${_limit}`);
             setArticles(data.data.data)
             setTotalPage(data.data.totalPage)
         } catch (err) {
@@ -36,10 +34,6 @@ const Home = () => {
 
     return (
         <div>
-            {articles.length !== 0 && articles.map(item =>
-                <ArticleCard key={item._id} {...item} />
-            )}
-            <ArticlePagination page={Number(page)} totalPage={Number(totalPage)} />
         </div>
     )
 }

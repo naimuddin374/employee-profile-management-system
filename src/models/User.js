@@ -15,7 +15,7 @@ const UserSchema = new Schema({
         type: String,
         require: true,
     },
-    type: {
+    role: {
         type: Number, //1=EMPLOYEE, 2=COMPANY ADMINISTRATOR, 3=SYSTEM ADMINISTRATOR
         default: 1
     },

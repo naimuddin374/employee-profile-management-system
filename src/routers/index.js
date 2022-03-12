@@ -4,8 +4,8 @@ const path = require('path')
 
 const routes = [
     {
-        path: '/api/articles',
-        handler: require('./articleRouter')
+        path: '/api/companies',
+        handler: require('./companyRouter')
     },
     {
         path: '/api/auth',

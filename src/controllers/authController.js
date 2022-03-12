@@ -1,7 +1,7 @@
 const config = require('config')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const { User, Invitation, Company, Profile } = require('../models')
+const { User, Invitation, Profile } = require('../models')
 const { actionSuccess, createdSuccess, badRequest, serverError, validationError } = require('../utils')
 const loginValidator = require('../validators/login')
 const registerValidator = require('../validators/register')
@@ -23,9 +23,7 @@ exports.userLogin = async (req, res) => {
         const { email, password } = req.body
 
         // Check credentials
-        const user = await Profile.findOne({ "userId.email": email, "userId.status": 1, "companyId.status": 1 })
-        // .where('user.email').equals(email)
-
+        const user = await User.findOne({ email })
         if (!user) {
             return badRequest(res, null, 'Invalid Credentials!')
         } else if (user.status === 0) {
@@ -39,7 +37,15 @@ exports.userLogin = async (req, res) => {
             return badRequest(res, null, 'Invalid Credential!')
         }
 
-        const token = await tokenGenerator(user)
+
+        const profile = await Profile.findOne({ userId: user._id }).populate(['userId', 'companyId'])
+
+
+        if (profile.companyId && profile.companyId.status !== 1) {
+            return badRequest(res, null, 'Your company has been inactive, please contact with support!!!')
+        }
+
+        const token = await tokenGenerator({ ...user, companyId: profile?.companyId?._id, companyName: profile?.companyId?.name })
         return actionSuccess(res, 'Logged In Successfully', `Bearer ${token}`)
 
     } catch (error) {
@@ -52,7 +58,7 @@ exports.userLogin = async (req, res) => {
 // USER REGISTER METHOD
 exports.userRegister = async (req, res) => {
     try {
-        const { name, password, contact, email, token } = req.body
+        const { name, password, email, token } = req.body
 
 
         // FORM VALIDATE
@@ -86,7 +92,7 @@ exports.userRegister = async (req, res) => {
             name,
             email,
             password: hash,
-            type: 1
+            role: 1
         })
         const result = await user.save()
 
@@ -98,6 +104,7 @@ exports.userRegister = async (req, res) => {
             invitationId: invitation._id,
         })
         await profile.save()
+        await Invitation.findOneAndUpdate({ token }, { $set: { statue: 0 } }, { new: true, useFindAndModify: false })
 
 
         return createdSuccess(res, 'Registered Successful.', result)
@@ -110,12 +117,15 @@ exports.userRegister = async (req, res) => {
 
 
 // Token Generate
-const tokenGenerator = async (result) => {
+const tokenGenerator = async (profile) => {
+
     let token = await jwt.sign({
-        _id: result._id,
-        name: result.name,
-        email: result.email,
-        type: result.type,
+        _id: profile._id,
+        name: profile.name,
+        email: profile.email,
+        role: profile.role,
+        companyId: profile.companyId,
+        companyName: profile.companyName,
     }, config.get('SECRET_KEY'), { expiresIn: '7d' })
     return token
 }

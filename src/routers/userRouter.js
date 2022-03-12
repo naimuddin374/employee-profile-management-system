@@ -2,15 +2,12 @@ const router = require('express').Router()
 const { authenticate } = require('../middleware')
 
 // Import Controller
-const { get, store, update, remove, activeInactive, getAll, getDetail } = require('../controllers/userController')
+const { update, activeInactive, getAll, getDetail } = require('../controllers/userController')
 
 
-router.get('/', get)
-router.get('/id', getDetail)
-router.get('/all', authenticate, getAll)
-router.post('/', authenticate, store)
+router.get('/', authenticate, getAll)
+router.get('/id', authenticate, getDetail)
 router.put('/:id', authenticate, update)
-router.delete('/:id', authenticate, remove)
 router.get('/active/inactive/:id', authenticate, activeInactive)
 
 
