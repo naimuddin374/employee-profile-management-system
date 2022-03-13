@@ -45,7 +45,12 @@ exports.userLogin = async (req, res) => {
             return badRequest(res, null, 'Your company has been inactive, please contact with support!!!')
         }
 
-        const token = await tokenGenerator({ ...user, companyId: profile?.companyId?._id, companyName: profile?.companyId?.name })
+        const obj = {
+            ...user._doc,
+            companyId: profile?.companyId?._id || null,
+            companyName: profile?.companyId?.name || null
+        }
+        const token = await tokenGenerator(obj)
         return actionSuccess(res, 'Logged In Successfully', `Bearer ${token}`)
 
     } catch (error) {
@@ -117,15 +122,14 @@ exports.userRegister = async (req, res) => {
 
 
 // Token Generate
-const tokenGenerator = async (profile) => {
-
+const tokenGenerator = async (payload) => {
     let token = await jwt.sign({
-        _id: profile._id,
-        name: profile.name,
-        email: profile.email,
-        role: profile.role,
-        companyId: profile.companyId,
-        companyName: profile.companyName,
+        _id: payload._id,
+        name: payload.name,
+        email: payload.email,
+        role: payload.role,
+        companyId: payload.companyId,
+        companyName: payload.companyName,
     }, config.get('SECRET_KEY'), { expiresIn: '7d' })
     return token
 }

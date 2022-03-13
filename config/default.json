@@ -1,5 +1,8 @@
 {
     "SECRET_KEY": "APP_SECRET_KEY",
-    "DB_CONNECTION": "mongodb://localhost:27017/epms",
-    "env": "development"
+    "DB_CONNECTION": "mongodb+srv://admin:pass123@cluster0.erxao.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    "env": "development",
+    "MY_EMAIL": "naimuddin374@gmail.com",
+    "MY_PASS": "yofuyszqcwhhorts",
+    "CLIENT_BASE_URL": "http://localhost:3000"
 }

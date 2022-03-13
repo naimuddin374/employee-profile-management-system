@@ -47,6 +47,6 @@ let server = app.listen(PORT, () => {
 mongoose.connect(`${config.get('DB_CONNECTION')}`,
     { useNewUrlParser: true, useUnifiedTopology: true },
     () => {
-        logger.info(`${config.env === 'production' ? 'Live' : 'Local'} Database Connected... =${config.get('DB_CONNECTION')}`)
+        logger.info(`Database Connected... =${config.get('DB_CONNECTION')}`)
     }
 )

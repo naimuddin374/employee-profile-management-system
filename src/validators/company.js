@@ -1,10 +1,11 @@
 const companyValidator = data => {
     let error = {}
 
+    console.log('data', data)
     if (!data.name) {
         error.name = 'The name field is required!'
     }
-    if (!data.email && !data._id) {
+    if (!data._id && !data.email) {
         error.email = 'The email field is required!'
     }
     if (!data.phone) {

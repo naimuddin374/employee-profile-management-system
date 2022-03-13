@@ -1,6 +1,6 @@
 const { User, Profile } = require('../models')
-const { actionSuccess, serverError, badRequest, updatedSuccess } = require('../utils')
-
+const { actionSuccess, serverError, badRequest, updatedSuccess, validationError } = require('../utils')
+const registerValidator = require('../validators/register')
 
 
 
@@ -13,7 +13,6 @@ exports.getAll = async (req, res) => {
         if (user.role !== 3) {
             where.companyId = user.companyId;
         }
-
         const result = await Profile.find(where).sort({ _id: -1 }).populate('userId')
         return actionSuccess(res, '', result)
     } catch (error) {
@@ -24,7 +23,7 @@ exports.getAll = async (req, res) => {
 // GET DETAIL
 exports.getDetail = async (req, res) => {
     try {
-        const user = await Profile.findByOne({ userId: req.params.id, }).populate(['userId', 'companyId'])
+        const user = await Profile.findOne({ userId: req.params.id, }).populate(['userId', 'companyId'])
         return actionSuccess(res, '', user)
     } catch (error) {
         return serverError(res, error)
@@ -37,6 +36,10 @@ exports.getDetail = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         const { name, phone, address } = req.body
+        const validate = registerValidator({ ...req.body, _id: req.user.id })
+        if (!validate.isValid) {
+            return validationError(res, validate.error)
+        }
 
         const result = await User.findOneAndUpdate({ _id: req.user._id }, { $set: { name } }, { new: true, useFindAndModify: false })
         await Profile.findOneAndUpdate({ userId: req.user._id }, { $set: { phone, address } }, { new: true, useFindAndModify: false })

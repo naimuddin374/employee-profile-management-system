@@ -1,4 +1,4 @@
-const { actionSuccess, createdSuccess, updatedSuccess, badRequest, validationError, serverError, makeRand, filterText, dateFormatter, getToDate, getNowTime, uniqueCode, toTitleCase } = require('./helper')
+const { actionSuccess, createdSuccess, updatedSuccess, badRequest, validationError, serverError, makeRand, filterText, dateFormatter, getToDate, getNowTime, uniqueCode, toTitleCase, uuid } = require('./helper')
 const logger = require('./logger')
 
 
@@ -16,5 +16,6 @@ module.exports = {
     getNowTime,
     uniqueCode,
     toTitleCase,
-    logger
+    logger,
+    uuid
 }

@@ -7,9 +7,6 @@ const registerValidator = data => {
     if (!data.name) {
         error.name = 'Name field is required!'
     }
-    if (!data.contact) {
-        error.contact = 'Phone number field is required!'
-    }
     if (!data.email) {
         error.email = 'Email field is required!'
     }

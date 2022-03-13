@@ -6,7 +6,7 @@ const { update, activeInactive, getAll, getDetail } = require('../controllers/us
 
 
 router.get('/', authenticate, getAll)
-router.get('/id', authenticate, getDetail)
+router.get('/:id', authenticate, getDetail)
 router.put('/:id', authenticate, update)
 router.get('/active/inactive/:id', authenticate, activeInactive)
 

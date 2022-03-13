@@ -13,7 +13,7 @@ const Home = () => {
 
 
     React.useEffect(() => {
-        getData(router.query.page)
+        // getData(router.query.page)
     }, [router.query])
 
 
@@ -34,6 +34,7 @@ const Home = () => {
 
     return (
         <div>
+            Welcome home page
         </div>
     )
 }

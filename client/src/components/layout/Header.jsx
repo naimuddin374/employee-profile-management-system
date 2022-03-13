@@ -35,27 +35,31 @@ const Header = () => {
                     <Nav
                         navbar
                     >
-                        <NavItem>
-                            <Link href='/'>
-                                <a className="nav-link">Home</a>
-                            </Link>
-                        </NavItem>
+
                         {Object.keys(user).length !== 0 ? <>
-                            {user.type > 1 &&
+                            {user.role > 1 &&
                                 <NavItem>
-                                    <Link href='/article'>
-                                        <a className="nav-link">Article</a>
+                                    <Link href='/employee'>
+                                        <a className="nav-link">Employee</a>
                                     </Link>
-                                </NavItem>}
-                            {user.type > 2 &&
+                                </NavItem>
+                            }
+                            {user.role === 3 &&
                                 <NavItem>
-                                    <Link href='/editor'>
-                                        <a className="nav-link">Editor</a>
+                                    <Link href='/company'>
+                                        <a className="nav-link">Company</a>
                                     </Link>
-                                </NavItem>}
+                                </NavItem>
+                            }
+                            <NavItem>
+                                <Link href='/profile'>
+                                    <a className="nav-link">Profile</a>
+                                </Link>
+                            </NavItem>
                             <NavItem>
                                 <Button onClick={() => logoutHandler()} className="nav-link">Logout</Button>
                             </NavItem>
+
                         </> :
                             <NavItem>
                                 <Link href='/login'>

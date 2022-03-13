@@ -2,11 +2,12 @@ const passport = require('passport')
 const JwtStrategy = require('passport-jwt').Strategy
 const ExtractJwt = require('passport-jwt').ExtractJwt
 const { User } = require('../models')
+const config = require('config');
+
 
 const opts = {}
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
-opts.secretOrKey = 'APP_SECRET_KEY'
-
+opts.secretOrKey = config.get('SECRET_KEY')
 
 module.exports = (app) => {
     app.use(passport.initialize())
@@ -17,6 +18,8 @@ module.exports = (app) => {
                 if (!user) {
                     return done(null, false)
                 } else {
+                    user.companyId = payload.companyId
+                    user.companyName = payload.companyName
                     return done(null, user)
                 }
             })

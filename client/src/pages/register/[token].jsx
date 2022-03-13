@@ -1,54 +1,56 @@
 import React from 'react';
-import { Context } from '../../store/Context';
 import { useRouter } from 'next/router';
 import axios from '../../util/axios'
 import { Form, Button, FormGroup, Label, Input } from "reactstrap";
-import { setAuthToken } from '../../util/axios';
-import jwtDecode from "jwt-decode";
 import Link from 'next/link';
 
 
 
-const Login = () => {
-    const [user, setUser] = React.useContext(Context)
+const Register = () => {
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
+    const [name, setName] = React.useState('')
 
 
     const router = useRouter()
 
 
-    if (Object.keys(user).length !== 0) {
-        router.push('/home')
-    }
-
     async function submitHandler(e) {
         e.preventDefault()
 
-        if (!email || !password) {
+        if (!name || !email || !password) {
             alert('Validation failed!')
             return;
         }
 
 
         try {
-            const { data } = await axios.post('auth/login', { email, password })
-            const decoded = jwtDecode(data.data)
-            setAuthToken(data.data)
-            setUser({ ...decoded, token: data.data })
-            alert('Login Successful!')
-            setTimeout(() => {
-                router.push('/profile')
-            }, 1000)
+            const { data } = await axios.post('auth/register', { name, email, password, token: router.query.token })
+            alert(data.message)
+            router.push('/login')
         } catch (err) {
-            alert('Invalid Credentials!')
-            console.log(err.message)
+            alert('Something went wrong!')
+            console.error(err)
         }
     }
 
 
     return (
         <Form onSubmit={submitHandler}>
+            <FormGroup>
+                <Label for="Name">
+                    Name
+                </Label>
+                <Input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Type here.."
+                    required
+                />
+            </FormGroup>
+
             <FormGroup>
                 <Label for="email">
                     Email
@@ -78,9 +80,9 @@ const Login = () => {
             </FormGroup>
 
 
-            <Button>Login</Button>
-            <Link href='/register/token'><a>Don't have already account?</a></Link>
+            <Button>Register</Button>
+            <Link href='/login'><a>Have already account?</a></Link>
         </Form>
     )
 }
-export default Login;
+export default Register;

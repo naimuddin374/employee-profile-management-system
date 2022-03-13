@@ -1,7 +1,9 @@
-const { Company, User, Profile } = require('../models')
-const { actionSuccess, serverError, badRequest, validationError, createdSuccess, updatedSuccess } = require('../utils')
+const { Company, User, Profile, Invitation } = require('../models')
+const { actionSuccess, serverError, badRequest, validationError, createdSuccess, updatedSuccess, uuid } = require('../utils')
 const companyValidator = require('../validators/company')
 const bcrypt = require('bcrypt')
+const config = require('config')
+const nodemailer = require('nodemailer');
 
 
 
@@ -32,6 +34,7 @@ exports.getDetail = async (req, res) => {
 
 // DATA STORE 
 exports.store = async (req, res) => {
+
     try {
         const { name, email, password, phone, address } = req.body
 
@@ -41,7 +44,6 @@ exports.store = async (req, res) => {
         if (!validate.isValid) {
             return validationError(res, validate.error)
         }
-
         // OLD COMPANY
         const oldData = await Company.findOne({ email })
         if (oldData) {
@@ -102,7 +104,7 @@ exports.update = async (req, res) => {
 
 
         // FORM VALIDATE
-        const validate = companyValidator(req.body)
+        const validate = companyValidator({ ...req.body, _id: req.params.id })
         if (!validate.isValid) {
             return validationError(res, validate.error)
         }
@@ -151,6 +153,61 @@ exports.activeInactive = async (req, res) => {
         const result = await Company.findOneAndUpdate({ _id: oldCompany._id }, { $set: { status } }, { new: true, useFindAndModify: false })
 
         return updatedSuccess(res, result, `The company has been ${status === 1 ? 'active' : 'inactive'} successfully!!!`)
+    } catch (error) {
+        return serverError(res, error)
+    }
+}
+
+
+// INVITATION
+exports.inviteEmployee = async (req, res) => {
+    try {
+        // VALIDATION
+        const email = req.body.email
+        if (!email) {
+            return validationError(res, { email: 'The email field is required!' });
+        }
+
+
+        // CHECK USER
+        const oldData = await User.findOne({ email });
+        if (oldData) {
+            return badRequest(res, null, 'This email already exist!');
+        }
+
+
+
+        // MAKE TOKEN
+        const token = uuid();
+
+
+        // SHAVE TOKEN
+        const invitation = new Invitation({
+            companyId: req.user.companyId,
+            email,
+            token
+        })
+        const result = await invitation.save();
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: config.get('MY_EMAIL'),
+                pass: config.get('MY_PASS')
+            }
+        });
+
+        const url = `${config.get('CLIENT_BASE_URL')}/register/${token}`;
+
+        const mailOptions = {
+            from: config.get('MY_EMAIL'),
+            to: email,
+            subject: 'Send Invitation',
+            text: url
+        };
+
+        await transporter.sendMail(mailOptions);
+        return createdSuccess(res, 'Invitation has been sent successfully!', result);
     } catch (error) {
         return serverError(res, error)
     }
