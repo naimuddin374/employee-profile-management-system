@@ -89,7 +89,7 @@ exports.store = async (req, res) => {
 
 
 
-        return createdSuccess(res, '', result)
+        return createdSuccess(res, 'Create Success!', result)
     } catch (error) {
         return serverError(res, error)
     }

@@ -1,12 +1,14 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 import { Context } from '../../store/Context';
-const { Table } = require("reactstrap");
+const { Table, Button } = require("reactstrap");
 import axios from '../../util/axios'
+import CompanyForm from './CompanyForm';
 
 
 const Company = () => {
     const [data, setData] = React.useState([])
+    const [isOpen, setIsOpen] = React.useState(false)
     const [user] = React.useContext(Context)
     const router = useRouter()
 
@@ -54,6 +56,12 @@ const Company = () => {
         }
     }
 
+
+    function submitSuccess() {
+        setIsOpen(false)
+        getData()
+    }
+
     console.log('user', user)
 
     return (
@@ -61,6 +69,8 @@ const Company = () => {
             <div className='d-flex justify-content-between mt-2'>
                 <h3>List of Company</h3>
             </div>
+            <Button onClick={() => setIsOpen(!isOpen)}>Add New Company</Button>
+            {isOpen && <CompanyForm submitSuccess={submitSuccess} />}
             <Table>
                 <thead>
                     <tr>
@@ -82,7 +92,6 @@ const Company = () => {
                             <td>{item.address}</td>
                             <td>
                                 {item.status === 1 ? <button onClick={() => inactiveUser(item._id)}>Inactive</button> : <button onClick={() => activeUser(item._id)}>Active</button>}
-
                             </td>
                         </tr>)}
                 </tbody>
